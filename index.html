@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SAGET.ORG — cyberpunk game server hub and digital calling card.">
+  <title>SAGET.ORG</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 95,50 50,95 5,50' fill='%2300ffd5'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-panel: #12121a;
+      --neon: #00ffd5;
+      --accent: #ff2d6b;
+      --text-dim: #4a4a5a;
+      --text-light: #8a8a9a;
+      --font-display: 'Oxanium', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-light);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      /* Grid pattern overlay */
+      background-image:
+        radial-gradient(ellipse 600px 400px at 50% 35%, rgba(0, 255, 213, 0.05) 0%, transparent 70%),
+        repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(0, 255, 213, 0.03) 59px, rgba(0, 255, 213, 0.03) 60px),
+        repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(0, 255, 213, 0.03) 59px, rgba(0, 255, 213, 0.03) 60px);
+      background-attachment: fixed;
+    }
+
+    /* CRT scanline overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent 0%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.03) 50%,
+        rgba(0, 0, 0, 0.03) 100%
+      );
+      background-size: 100% 4px;
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px 40px;
+      min-height: 55vh;
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(2.5rem, 7vw, 7rem);
+      color: var(--neon);
+      letter-spacing: 0.08em;
+      text-shadow:
+        0 0 7px rgba(0, 255, 213, 0.8),
+        0 0 15px rgba(0, 255, 213, 0.6),
+        0 0 30px rgba(0, 255, 213, 0.4),
+        0 0 50px rgba(0, 255, 213, 0.25),
+        0 0 80px rgba(0, 255, 213, 0.15),
+        0 0 120px rgba(0, 255, 213, 0.08);
+      animation: flicker 6s ease-in-out infinite;
+      user-select: none;
+      text-align: center;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      /* First flicker at ~66% through the cycle (~4s mark) */
+      65% { opacity: 1; }
+      66% { opacity: 0.84; }
+      67% { opacity: 0.92; }
+      67.5% { opacity: 0.85; }
+      69% { opacity: 1; }
+      /* A tiny micro-flicker later */
+      85% { opacity: 1; }
+      85.5% { opacity: 0.9; }
+      86% { opacity: 1; }
+    }
+
+    .hero-divider {
+      width: min(500px, 80vw);
+      height: 1px;
+      margin-top: 28px;
+      background: linear-gradient(90deg, transparent 0%, var(--neon) 30%, var(--neon) 70%, transparent 100%);
+      opacity: 0.4;
+    }
+
+    /* ---- Server Status Panel ---- */
+    .server-panel {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    .panel-header {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+      padding-left: 2px;
+    }
+
+    .server-card {
+      background: var(--bg-panel);
+      border: 1px solid rgba(0, 255, 213, 0.1);
+      border-radius: 2px;
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .server-card:hover {
+      border-color: rgba(0, 255, 213, 0.25);
+      box-shadow: 0 0 20px rgba(0, 255, 213, 0.03), inset 0 0 20px rgba(0, 255, 213, 0.01);
+    }
+
+    .server-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .server-identity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Status dots */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.online {
+      background: var(--neon);
+      box-shadow: 0 0 6px var(--neon), 0 0 12px rgba(0, 255, 213, 0.4);
+      animation: pulse-dot 2.5s ease-in-out infinite;
+    }
+
+    .status-dot.offline {
+      background: var(--accent);
+      box-shadow: 0 0 4px rgba(255, 45, 107, 0.3);
+    }
+
+    .status-dot.unknown {
+      background: var(--text-dim);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.7;
+        transform: scale(1.15);
+      }
+    }
+
+    .server-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      color: #d0d0dd;
+    }
+
+    .game-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid rgba(74, 74, 90, 0.5);
+      border-radius: 2px;
+      padding: 2px 8px;
+      line-height: 1.4;
+    }
+
+    .server-address {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--neon);
+      opacity: 0.7;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .server-meta {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .player-count,
+    .last-checked {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    /* ---- Footer ---- */
+    .footer {
+      text-align: center;
+      padding: 30px 20px 36px;
+      border-top: 1px solid transparent;
+      border-image: linear-gradient(90deg, transparent 0%, rgba(0, 255, 213, 0.15) 30%, rgba(0, 255, 213, 0.15) 70%, transparent 100%) 1;
+    }
+
+    .footer-text {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 520px) {
+      .server-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .server-address {
+        padding-left: 18px;
+      }
+
+      .server-card {
+        padding: 14px 16px;
+      }
+
+      .hero {
+        padding: 60px 16px 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="logo">SAGET.ORG</div>
+    <div class="hero-divider"></div>
+  </section>
+
+  <section class="server-panel" id="server-panel">
+    <div class="panel-header">Server Status</div>
+    <div id="server-list"></div>
+  </section>
+
+  <footer class="footer">
+    <span class="footer-text">saget.org</span>
+  </footer>
+
+  <script>
+    (async function () {
+      const panel = document.getElementById('server-panel');
+      const container = document.getElementById('server-list');
+      try {
+        const res = await fetch('servers.json');
+        const data = await res.json();
+        const visible = data.servers.filter(s => s.visible);
+        if (visible.length === 0) {
+          panel.style.display = 'none';
+          return;
+        }
+        container.innerHTML = visible.map(server => {
+          const statusClass = server.status === 'online' ? 'online' :
+                              server.status === 'offline' ? 'offline' : 'unknown';
+          const players = server.players !== null && server.maxPlayers !== null
+            ? `${server.players}/${server.maxPlayers} players`
+            : '';
+          const checked = server.lastChecked
+            ? `Last checked: ${new Date(server.lastChecked).toLocaleString()}`
+            : '';
+          const displayName = server.serverName || server.name;
+          return `
+            <div class="server-card">
+              <div class="server-main">
+                <div class="server-identity">
+                  <span class="status-dot ${statusClass}"></span>
+                  <span class="server-name">${displayName}</span>
+                  <span class="game-badge">${server.game}</span>
+                </div>
+                <span class="server-address">${server.address}:${server.port}</span>
+              </div>
+              <div class="server-meta">
+                ${players ? `<span class="player-count">${players}</span>` : ''}
+                ${checked ? `<span class="last-checked">${checked}</span>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (e) {
+        panel.style.display = 'none';
+      }
+    })();
+  </script>
+
+</body>
+</html>
