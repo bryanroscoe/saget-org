@@ -18,6 +18,7 @@
       --text-dim: #4a4a5a;
       --text-light: #8a8a9a;
       --font-display: 'Oxanium', sans-serif;
+      --text-name: #d0d0dd;
       --font-mono: 'Share Tech Mono', monospace;
     }
 
@@ -203,7 +204,7 @@
       font-family: var(--font-display);
       font-weight: 700;
       font-size: 1rem;
-      color: #d0d0dd;
+      color: var(--text-name);
     }
 
     .game-badge {
@@ -281,14 +282,14 @@
 </head>
 <body>
 
-  <section class="hero">
-    <div class="logo">SAGET.ORG</div>
+  <main class="hero">
+    <h1 class="logo">SAGET.ORG</h1>
     <div class="hero-divider"></div>
-  </section>
+  </main>
 
   <section class="server-panel" id="server-panel">
-    <div class="panel-header">Server Status</div>
-    <div id="server-list"></div>
+    <h2 class="panel-header">Server Status</h2>
+    <div id="server-list" class="server-list"></div>
   </section>
 
   <footer class="footer">
@@ -297,12 +298,20 @@
 
   <script>
     (async function () {
+      function esc(str) {
+        const el = document.createElement('span');
+        el.textContent = String(str);
+        return el.innerHTML;
+      }
+
       const panel = document.getElementById('server-panel');
       const container = document.getElementById('server-list');
       try {
         const res = await fetch('servers.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        const visible = data.servers.filter(s => s.visible);
+        const servers = Array.isArray(data?.servers) ? data.servers : [];
+        const visible = servers.filter(s => s.visible);
         if (visible.length === 0) {
           panel.style.display = 'none';
           return;
@@ -322,14 +331,14 @@
               <div class="server-main">
                 <div class="server-identity">
                   <span class="status-dot ${statusClass}"></span>
-                  <span class="server-name">${displayName}</span>
-                  <span class="game-badge">${server.game}</span>
+                  <span class="server-name">${esc(displayName)}</span>
+                  <span class="game-badge">${esc(server.game)}</span>
                 </div>
-                <span class="server-address">${server.address}:${server.port}</span>
+                <span class="server-address">${esc(server.address)}:${esc(server.port)}</span>
               </div>
               <div class="server-meta">
-                ${players ? `<span class="player-count">${players}</span>` : ''}
-                ${checked ? `<span class="last-checked">${checked}</span>` : ''}
+                ${players ? `<span class="player-count">${esc(players)}</span>` : ''}
+                ${checked ? `<span class="last-checked">${esc(checked)}</span>` : ''}
               </div>
             </div>
           `;
