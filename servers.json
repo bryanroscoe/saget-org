@@ -1,0 +1,17 @@
+{
+  "servers": [
+    {
+      "name": "Satisfactory",
+      "game": "satisfactory",
+      "address": "saget.org",
+      "port": 7777,
+      "queryPort": 15000,
+      "visible": true,
+      "status": "unknown",
+      "players": null,
+      "maxPlayers": null,
+      "serverName": null,
+      "lastChecked": null
+    }
+  ]
+}
