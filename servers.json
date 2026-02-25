@@ -3,7 +3,7 @@
     {
       "name": "Satisfactory",
       "game": "satisfactory",
-      "address": "saget.org",
+      "address": "home.saget.org",
       "port": 7777,
       "queryPort": 15000,
       "visible": true,
