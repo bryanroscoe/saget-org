@@ -5,13 +5,8 @@
       "game": "satisfactory",
       "address": "home.saget.org",
       "port": 7777,
-      "queryPort": 15000,
-      "visible": true,
-      "status": "offline",
-      "players": null,
-      "maxPlayers": null,
-      "serverName": null,
-      "lastChecked": "2026-02-25T19:40:11.099Z"
+      "queryPort": 7777,
+      "visible": true
     }
   ]
 }

@@ -307,7 +307,7 @@
       const panel = document.getElementById('server-panel');
       const container = document.getElementById('server-list');
       try {
-        const res = await fetch('servers.json');
+        const res = await fetch('status.json');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const servers = Array.isArray(data?.servers) ? data.servers : [];

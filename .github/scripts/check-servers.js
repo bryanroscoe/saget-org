@@ -1,7 +1,12 @@
-import { readFile, writeFile } from 'fs/promises';
+import { readFile, writeFile, mkdir, copyFile } from 'fs/promises';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { GameDig } from 'gamedig';
 
-const SERVERS_PATH = new URL('../../servers.json', import.meta.url);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(__dirname, '../..');
+const SERVERS_PATH = resolve(ROOT, 'servers.json');
+const SITE_DIR = resolve(ROOT, '_site');
 
 async function checkServer(server) {
   if (!server.visible) return server;
@@ -35,18 +40,26 @@ async function checkServer(server) {
 
 async function main() {
   const raw = await readFile(SERVERS_PATH, 'utf-8');
-  const data = JSON.parse(raw);
+  const config = JSON.parse(raw);
 
-  const updated = await Promise.all(data.servers.map(checkServer));
-  data.servers = updated;
+  const updated = await Promise.all(config.servers.map(checkServer));
+  const status = { servers: updated };
 
-  const output = JSON.stringify(data, null, 2) + '\n';
+  await mkdir(SITE_DIR, { recursive: true });
 
-  if (output !== raw) {
-    await writeFile(SERVERS_PATH, output);
-    console.log('servers.json updated');
-  } else {
-    console.log('No changes');
+  // Write live status data
+  await writeFile(resolve(SITE_DIR, 'status.json'), JSON.stringify(status, null, 2) + '\n');
+  console.log('status.json written to _site/');
+
+  // Copy static files
+  const staticFiles = ['index.html', 'CNAME', 'servers.json'];
+  for (const file of staticFiles) {
+    try {
+      await copyFile(resolve(ROOT, file), resolve(SITE_DIR, file));
+      console.log(`Copied ${file} to _site/`);
+    } catch {
+      console.log(`Skipping ${file} (not found)`);
+    }
   }
 }
 
