@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
-import Gamedig from 'gamedig';
+import { GameDig } from 'gamedig';
 
 const SERVERS_PATH = new URL('../../servers.json', import.meta.url);
 
@@ -7,7 +7,7 @@ async function checkServer(server) {
   if (!server.visible) return server;
 
   try {
-    const result = await Gamedig.query({
+    const result = await GameDig.query({
       type: server.game,
       host: server.address,
       port: server.queryPort || server.port,
