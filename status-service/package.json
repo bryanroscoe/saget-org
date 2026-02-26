@@ -1,0 +1,8 @@
+{
+  "name": "saget-status-service",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "gamedig": "^5.1.4"
+  }
+}

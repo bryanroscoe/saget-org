@@ -301,7 +301,11 @@
   </footer>
 
   <script>
-    (async function () {
+    (function () {
+      const LIVE_URL = 'https://home.saget.org:8095/status';
+      const FALLBACK_URL = 'status.json';
+      const REFRESH_INTERVAL = 30000;
+
       function esc(str) {
         const el = document.createElement('span');
         el.textContent = String(str);
@@ -310,16 +314,25 @@
 
       const panel = document.getElementById('server-panel');
       const container = document.getElementById('server-list');
-      try {
-        const res = await fetch('status.json?t=' + Date.now());
+
+      async function fetchStatus() {
+        try {
+          const res = await fetch(LIVE_URL);
+          if (res.ok) return res.json();
+        } catch {}
+        const res = await fetch(FALLBACK_URL + '?t=' + Date.now());
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        return res.json();
+      }
+
+      function render(data) {
         const servers = Array.isArray(data?.servers) ? data.servers : [];
         const visible = servers.filter(s => s.visible);
         if (visible.length === 0) {
           panel.style.display = 'none';
           return;
         }
+        panel.style.display = '';
         container.innerHTML = visible.map(server => {
           const statusClass = server.status === 'online' ? 'online' :
                               server.status === 'offline' ? 'offline' : 'unknown';
@@ -347,9 +360,19 @@
             </div>
           `;
         }).join('');
-      } catch (e) {
-        panel.style.display = 'none';
       }
+
+      async function refresh() {
+        try {
+          const data = await fetchStatus();
+          render(data);
+        } catch {
+          // keep last rendered state on error
+        }
+      }
+
+      refresh();
+      setInterval(refresh, REFRESH_INTERVAL);
     })();
   </script>
 
