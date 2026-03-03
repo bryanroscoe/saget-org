@@ -317,7 +317,10 @@
 
       async function fetchStatus() {
         try {
-          const res = await fetch(LIVE_URL);
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 5000);
+          const res = await fetch(LIVE_URL, { signal: controller.signal });
+          clearTimeout(timeout);
           if (res.ok) return res.json();
         } catch {}
         const res = await fetch(FALLBACK_URL + '?t=' + Date.now());
