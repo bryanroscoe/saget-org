@@ -215,6 +215,18 @@
       line-height: 1.4;
     }
 
+    .pass-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: var(--neon);
+      opacity: 0.8;
+      border: 1px solid rgba(0, 255, 213, 0.3);
+      border-radius: 2px;
+      padding: 2px 8px;
+      line-height: 1.4;
+    }
+
     .server-address {
       font-family: var(--font-mono);
       font-size: 0.82rem;
@@ -343,6 +355,7 @@
                   <span class="status-dot ${statusClass}"></span>
                   <span class="server-name">${esc(displayName)}</span>
                   <span class="game-badge">${esc(server.game)}</span>
+                  <span class="pass-badge">Password: the usu.</span>
                 </div>
                 <span class="server-address">${esc(server.address)}:${esc(server.port)}</span>
               </div>
