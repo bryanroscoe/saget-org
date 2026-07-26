@@ -17,6 +17,7 @@
     :root {
       --bg: #0a0a0f;
       --bg-panel: #12121a;
+      --bg-panel-sub: #181824;
       --neon: #00ffd5;
       --accent: #ff2d6b;
       --text-dim: #5a5a6e;
@@ -80,7 +81,7 @@
       align-items: center;
       justify-content: center;
       padding: 80px 20px 40px;
-      min-height: 55vh;
+      min-height: 50vh;
     }
 
     .logo {
@@ -124,7 +125,7 @@
     /* ---- Server Status Panel ---- */
     .server-panel {
       width: 100%;
-      max-width: 700px;
+      max-width: 750px;
       margin: 0 auto;
       padding: 0 20px 60px;
     }
@@ -143,10 +144,9 @@
       background: var(--bg-panel);
       border: 1px solid rgba(0, 255, 213, 0.12);
       border-radius: 4px;
-      padding: 22px 24px 22px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
-      overflow: visible;
+      overflow: hidden;
     }
 
     .server-card:hover {
@@ -156,10 +156,12 @@
 
     .server-main {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 14px;
+      padding: 14px 18px;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
     }
 
     .server-identity {
@@ -200,77 +202,141 @@
     .server-name {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 0.98rem;
       color: var(--text-name);
-      line-height: 1.4;
     }
 
     .game-badge {
       font-family: var(--font-mono);
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-light);
-      border: 1px solid rgba(138, 138, 154, 0.4);
+      border: 1px solid rgba(138, 138, 154, 0.3);
       border-radius: 2px;
-      padding: 2px 8px;
-      line-height: 1.4;
+      padding: 1px 6px;
     }
 
-    .server-connection {
+    .server-right {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
+      align-items: center;
+      gap: 14px;
     }
 
     .server-address {
       font-family: var(--font-mono);
-      font-size: 0.88rem;
+      font-size: 0.84rem;
       color: var(--neon);
       opacity: 0.9;
-      letter-spacing: 0.03em;
-      white-space: nowrap;
-      line-height: 1.4;
+      letter-spacing: 0.02em;
     }
 
-    .server-password {
+    .player-pill {
       font-family: var(--font-mono);
-      font-size: 0.76rem;
-      color: #7a7a90;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      line-height: 1.5;
-      padding-top: 2px;
-      padding-bottom: 4px;
+      font-size: 0.72rem;
+      color: var(--text-light);
+      background: rgba(0, 255, 213, 0.05);
+      border: 1px solid rgba(0, 255, 213, 0.15);
+      border-radius: 3px;
+      padding: 2px 8px;
     }
 
-    .server-password-val {
-      color: var(--neon);
-      opacity: 0.85;
-      font-weight: bold;
-    }
-
-    .server-meta {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    .player-count,
-    .last-checked {
+    .expand-btn {
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      color: var(--text-light);
-      line-height: 1.5;
+      color: var(--text-dim);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
     }
 
-    .player-names {
+    .server-card.open .expand-btn {
+      transform: rotate(180deg);
       color: var(--neon);
-      opacity: 0.85;
-      font-size: 0.73rem;
+    }
+
+    /* ---- Expandable Details Accordion ---- */
+    .server-details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+      background: var(--bg-panel-sub);
+      border-top: 1px solid rgba(0, 255, 213, 0.05);
+      padding: 0 18px;
+    }
+
+    .server-card.open .server-details {
+      max-height: 300px;
+      padding: 14px 18px 16px;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px 24px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .detail-label {
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .detail-val {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-val.highlight {
+      color: var(--neon);
+    }
+
+    .player-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--neon);
+      background: rgba(0, 255, 213, 0.08);
+      border: 1px solid rgba(0, 255, 213, 0.2);
+      border-radius: 3px;
+      padding: 1px 6px;
+      margin-right: 4px;
+      margin-top: 2px;
+    }
+
+    .copy-btn {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      color: var(--neon);
+      background: rgba(0, 255, 213, 0.08);
+      border: 1px solid rgba(0, 255, 213, 0.25);
+      border-radius: 2px;
+      padding: 2px 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(0, 255, 213, 0.2);
     }
 
     /* ---- Footer ---- */
@@ -289,11 +355,11 @@
     }
 
     /* ---- Responsive ---- */
-    @media (max-width: 520px) {
-      .server-main { flex-direction: column; align-items: flex-start; gap: 6px; }
-      .server-connection { align-items: flex-start; padding-left: 18px; }
-      .server-card { padding: 16px; }
-      .hero { padding: 60px 16px 30px; }
+    @media (max-width: 600px) {
+      .server-main { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .server-right { width: 100%; justify-content: space-between; margin-top: 4px; }
+      .server-card { margin-bottom: 10px; }
+      .hero { padding: 50px 16px 20px; }
     }
   </style>
 </head>
@@ -348,6 +414,14 @@
         throw new Error('All status endpoints unavailable');
       }
 
+      window.copyText = function(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = 'COPIED!';
+          setTimeout(() => btn.textContent = orig, 1500);
+        });
+      };
+
       function render(data) {
         const servers = Array.isArray(data?.servers) ? data.servers : [];
         const visible = servers.filter(s => s.visible !== false);
@@ -356,41 +430,79 @@
           return;
         }
         panel.style.display = '';
-        container.innerHTML = visible.map(server => {
-          // Verify if data is fresh (within last 15 minutes)
+
+        // Save current open states before re-rendering
+        const openMap = {};
+        container.querySelectorAll('.server-card').forEach(card => {
+          if (card.classList.contains('open')) {
+            openMap[card.getAttribute('data-id')] = true;
+          }
+        });
+
+        container.innerHTML = visible.map((server, idx) => {
+          const cardId = server.name || ('server-' + idx);
+          const isOpen = openMap[cardId] || (idx === 0 && server.status === 'online');
+
           const lastCheckedTime = server.lastChecked ? new Date(server.lastChecked).getTime() : 0;
           const isStale = !lastCheckedTime || (Date.now() - lastCheckedTime > 15 * 60 * 1000);
           
           const isOnline = !isStale && server.status === 'online';
           const statusClass = isOnline ? 'online' : 'offline';
           
-          const playerNamesList = Array.isArray(server.playerNames) && server.playerNames.length > 0
-            ? ` (<span class="player-names">${server.playerNames.map(esc).join(', ')}</span>)`
-            : '';
-          const players = isOnline && server.players !== null && server.maxPlayers !== null
-            ? `${server.players}/${server.maxPlayers} players${playerNamesList}`
-            : '0/0 players';
+          const playersCount = isOnline && server.players !== null && server.maxPlayers !== null
+            ? `${server.players}/${server.maxPlayers}`
+            : '0/0';
+
+          const playerTags = Array.isArray(server.playerNames) && server.playerNames.length > 0
+            ? server.playerNames.map(name => `<span class="player-tag">${esc(name)}</span>`).join('')
+            : '<span style="opacity: 0.5;">None</span>';
+
           const checked = server.lastChecked && !isStale
-            ? `Last checked: ${new Date(server.lastChecked).toLocaleString()}`
+            ? new Date(server.lastChecked).toLocaleString()
             : 'Offline';
+
           const displayName = server.serverName || server.name;
+          const fullAddr = `${server.address}:${server.port}`;
 
           return `
-            <div class="server-card">
-              <div class="server-main">
+            <div class="server-card ${isOpen ? 'open' : ''}" data-id="${esc(cardId)}">
+              <div class="server-main" onclick="this.parentElement.classList.toggle('open')">
                 <div class="server-identity">
                   <span class="status-dot ${statusClass}"></span>
                   <span class="server-name">${esc(displayName)}</span>
                   <span class="game-badge">${esc(server.game)}</span>
                 </div>
-                <div class="server-connection">
-                  <span class="server-address">${esc(server.address)}:${esc(server.port)}</span>
-                  <span class="server-password">Password: <span class="server-password-val">the usu.</span></span>
+                <div class="server-right">
+                  <span class="server-address">${esc(fullAddr)}</span>
+                  <span class="player-pill">${esc(playersCount)}</span>
+                  <button class="expand-btn" aria-label="Toggle details">▼</button>
                 </div>
               </div>
-              <div class="server-meta">
-                <span class="player-count">${players}</span>
-                <span class="last-checked">${esc(checked)}</span>
+              <div class="server-details">
+                <div class="details-grid">
+                  <div class="detail-item">
+                    <span class="detail-label">Server Address</span>
+                    <div class="detail-val highlight">
+                      <span>${esc(fullAddr)}</span>
+                      <button class="copy-btn" onclick="event.stopPropagation(); copyText('${esc(fullAddr)}', this)">COPY</button>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">Password</span>
+                    <div class="detail-val highlight">
+                      <span>the usual</span>
+                      <button class="copy-btn" onclick="event.stopPropagation(); copyText('the usual', this)">COPY</button>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">Online Players (${esc(server.players || 0)})</span>
+                    <div class="detail-val">${playerTags}</div>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">Last Checked</span>
+                    <div class="detail-val">${esc(checked)}</div>
+                  </div>
+                </div>
               </div>
             </div>
           `;
@@ -402,7 +514,7 @@
           const data = await fetchStatus();
           render(data);
         } catch {
-          // Keep offline state on error
+          // Keep state on error
         }
       }
 
