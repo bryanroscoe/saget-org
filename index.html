@@ -19,8 +19,8 @@
       --bg-panel: #12121a;
       --neon: #00ffd5;
       --accent: #ff2d6b;
-      --text-dim: #4a4a5a;
-      --text-light: #8a8a9a;
+      --text-dim: #5a5a6e;
+      --text-light: #9a9ab0;
       --font-display: 'Oxanium', sans-serif;
       --text-name: #d0d0dd;
       --font-mono: 'Share Tech Mono', monospace;
@@ -141,17 +141,17 @@
 
     .server-card {
       background: var(--bg-panel);
-      border: 1px solid rgba(0, 255, 213, 0.1);
-      border-radius: 2px;
-      padding: 20px 22px 20px;
-      margin-bottom: 14px;
+      border: 1px solid rgba(0, 255, 213, 0.12);
+      border-radius: 4px;
+      padding: 22px 24px 22px;
+      margin-bottom: 16px;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
       overflow: visible;
     }
 
     .server-card:hover {
-      border-color: rgba(0, 255, 213, 0.25);
-      box-shadow: 0 0 20px rgba(0, 255, 213, 0.03), inset 0 0 20px rgba(0, 255, 213, 0.01);
+      border-color: rgba(0, 255, 213, 0.3);
+      box-shadow: 0 0 20px rgba(0, 255, 213, 0.04), inset 0 0 20px rgba(0, 255, 213, 0.02);
     }
 
     .server-main {
@@ -159,7 +159,7 @@
       align-items: flex-start;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 14px;
     }
 
     .server-identity {
@@ -200,18 +200,18 @@
     .server-name {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: var(--text-name);
       line-height: 1.4;
     }
 
     .game-badge {
       font-family: var(--font-mono);
-      font-size: 0.6rem;
+      font-size: 0.62rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--text-dim);
-      border: 1px solid rgba(74, 74, 90, 0.5);
+      color: var(--text-light);
+      border: 1px solid rgba(138, 138, 154, 0.4);
       border-radius: 2px;
       padding: 2px 8px;
       line-height: 1.4;
@@ -226,23 +226,29 @@
 
     .server-address {
       font-family: var(--font-mono);
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: var(--neon);
-      opacity: 0.75;
-      letter-spacing: 0.02em;
+      opacity: 0.9;
+      letter-spacing: 0.03em;
       white-space: nowrap;
-      line-height: 1.5;
+      line-height: 1.4;
     }
 
     .server-password {
       font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      letter-spacing: 0.03em;
+      font-size: 0.76rem;
+      color: #7a7a90;
+      letter-spacing: 0.04em;
       white-space: nowrap;
       line-height: 1.5;
       padding-top: 2px;
       padding-bottom: 4px;
+    }
+
+    .server-password-val {
+      color: var(--neon);
+      opacity: 0.85;
+      font-weight: bold;
     }
 
     .server-meta {
@@ -256,9 +262,15 @@
     .player-count,
     .last-checked {
       font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--text-dim);
+      font-size: 0.75rem;
+      color: var(--text-light);
       line-height: 1.5;
+    }
+
+    .player-names {
+      color: var(--neon);
+      opacity: 0.85;
+      font-size: 0.73rem;
     }
 
     /* ---- Footer ---- */
@@ -280,7 +292,7 @@
     @media (max-width: 520px) {
       .server-main { flex-direction: column; align-items: flex-start; gap: 6px; }
       .server-connection { align-items: flex-start; padding-left: 18px; }
-      .server-card { padding: 14px 16px; }
+      .server-card { padding: 16px; }
       .hero { padding: 60px 16px 30px; }
     }
   </style>
@@ -351,8 +363,12 @@
           
           const isOnline = !isStale && server.status === 'online';
           const statusClass = isOnline ? 'online' : 'offline';
+          
+          const playerNamesList = Array.isArray(server.playerNames) && server.playerNames.length > 0
+            ? ` (<span class="player-names">${server.playerNames.map(esc).join(', ')}</span>)`
+            : '';
           const players = isOnline && server.players !== null && server.maxPlayers !== null
-            ? `${server.players}/${server.maxPlayers} players`
+            ? `${server.players}/${server.maxPlayers} players${playerNamesList}`
             : '0/0 players';
           const checked = server.lastChecked && !isStale
             ? `Last checked: ${new Date(server.lastChecked).toLocaleString()}`
@@ -369,11 +385,11 @@
                 </div>
                 <div class="server-connection">
                   <span class="server-address">${esc(server.address)}:${esc(server.port)}</span>
-                  <span class="server-password">Password: the usu.</span>
+                  <span class="server-password">Password: <span class="server-password-val">the usu.</span></span>
                 </div>
               </div>
               <div class="server-meta">
-                <span class="player-count">${esc(players)}</span>
+                <span class="player-count">${players}</span>
                 <span class="last-checked">${esc(checked)}</span>
               </div>
             </div>
