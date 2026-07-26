@@ -143,9 +143,10 @@
       background: var(--bg-panel);
       border: 1px solid rgba(0, 255, 213, 0.1);
       border-radius: 2px;
-      padding: 16px 20px;
-      margin-bottom: 10px;
+      padding: 18px 20px 18px;
+      margin-bottom: 12px;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      overflow: visible;
     }
 
     .server-card:hover {
@@ -155,7 +156,7 @@
 
     .server-main {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 10px;
@@ -219,31 +220,34 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 2px;
+      gap: 4px;
     }
 
     .server-address {
       font-family: var(--font-mono);
       font-size: 0.82rem;
       color: var(--neon);
-      opacity: 0.7;
+      opacity: 0.75;
       letter-spacing: 0.02em;
       white-space: nowrap;
+      line-height: 1.2;
     }
 
     .server-password {
       font-family: var(--font-mono);
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-dim);
       letter-spacing: 0.03em;
       white-space: nowrap;
+      line-height: 1.4;
+      padding-bottom: 2px;
     }
 
     .server-meta {
       display: flex;
       align-items: center;
       gap: 18px;
-      margin-top: 10px;
+      margin-top: 12px;
       flex-wrap: wrap;
     }
 
@@ -252,6 +256,7 @@
       font-family: var(--font-mono);
       font-size: 0.7rem;
       color: var(--text-dim);
+      line-height: 1.4;
     }
 
     /* ---- Footer ---- */
