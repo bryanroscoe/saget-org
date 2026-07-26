@@ -42,12 +42,33 @@ async function main() {
   const raw = await readFile(SERVERS_PATH, 'utf-8');
   const config = JSON.parse(raw);
 
-  const updated = await Promise.all(config.servers.map(checkServer));
-  const status = { servers: updated };
+  let status = null;
+
+  try {
+    console.log('Fetching live status from http://home.saget.org:8095/status...');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+    const res = await fetch('http://home.saget.org:8095/status', { signal: controller.signal });
+    clearTimeout(timeout);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.servers)) {
+        status = data;
+        console.log('Successfully fetched live status from home.saget.org:8095');
+      }
+    }
+  } catch (err) {
+    console.log('Live status API unreachable, falling back to GameDig query:', err.message);
+  }
+
+  if (!status || !Array.isArray(status.servers)) {
+    const updated = await Promise.all(config.servers.map(checkServer));
+    status = { servers: updated };
+  }
 
   await mkdir(SITE_DIR, { recursive: true });
 
-  // Write live status data
+  // Write status data
   await writeFile(resolve(SITE_DIR, 'status.json'), JSON.stringify(status, null, 2) + '\n');
   console.log('status.json written to _site/');
 
