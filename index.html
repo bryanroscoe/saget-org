@@ -103,13 +103,11 @@
 
     @keyframes flicker {
       0%, 100% { opacity: 1; }
-      /* First flicker at ~66% through the cycle (~4s mark) */
       65% { opacity: 1; }
       66% { opacity: 0.84; }
       67% { opacity: 0.92; }
       67.5% { opacity: 0.85; }
       69% { opacity: 1; }
-      /* A tiny micro-flicker later */
       85% { opacity: 1; }
       85.5% { opacity: 0.9; }
       86% { opacity: 1; }
@@ -194,14 +192,8 @@
     }
 
     @keyframes pulse-dot {
-      0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      50% {
-        opacity: 0.7;
-        transform: scale(1.15);
-      }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.15); }
     }
 
     .server-name {
@@ -264,23 +256,10 @@
 
     /* ---- Responsive ---- */
     @media (max-width: 520px) {
-      .server-main {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-      }
-
-      .server-address {
-        padding-left: 18px;
-      }
-
-      .server-card {
-        padding: 14px 16px;
-      }
-
-      .hero {
-        padding: 60px 16px 30px;
-      }
+      .server-main { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .server-address { padding-left: 18px; }
+      .server-card { padding: 14px 16px; }
+      .hero { padding: 60px 16px 30px; }
     }
   </style>
 </head>
@@ -302,9 +281,12 @@
 
   <script>
     (function () {
-      const LIVE_URL = 'https://home.saget.org:8095/status';
-      const FALLBACK_URL = 'status.json';
-      const REFRESH_INTERVAL = 30000;
+      const ENDPOINTS = [
+        'http://home.saget.org:8095/status',
+        'http://home.saget.org/status',
+        'status.json'
+      ];
+      const REFRESH_INTERVAL = 15000;
 
       function esc(str) {
         const el = document.createElement('span');
@@ -316,36 +298,44 @@
       const container = document.getElementById('server-list');
 
       async function fetchStatus() {
-        try {
-          const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 5000);
-          const res = await fetch(LIVE_URL, { signal: controller.signal });
-          clearTimeout(timeout);
-          if (res.ok) return res.json();
-        } catch {}
-        const res = await fetch(FALLBACK_URL + '?t=' + Date.now());
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
+        for (const url of ENDPOINTS) {
+          try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 4000);
+            const res = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), { signal: controller.signal });
+            clearTimeout(timeout);
+            if (res.ok) {
+              const data = await res.json();
+              if (data && Array.isArray(data.servers)) return data;
+            }
+          } catch (e) {}
+        }
+        throw new Error('All status endpoints unavailable');
       }
 
       function render(data) {
         const servers = Array.isArray(data?.servers) ? data.servers : [];
-        const visible = servers.filter(s => s.visible);
+        const visible = servers.filter(s => s.visible !== false);
         if (visible.length === 0) {
           panel.style.display = 'none';
           return;
         }
         panel.style.display = '';
         container.innerHTML = visible.map(server => {
-          const statusClass = server.status === 'online' ? 'online' :
-                              server.status === 'offline' ? 'offline' : 'unknown';
-          const players = server.players !== null && server.maxPlayers !== null
+          // Verify if data is fresh (within last 15 minutes)
+          const lastCheckedTime = server.lastChecked ? new Date(server.lastChecked).getTime() : 0;
+          const isStale = !lastCheckedTime || (Date.now() - lastCheckedTime > 15 * 60 * 1000);
+          
+          const isOnline = !isStale && server.status === 'online';
+          const statusClass = isOnline ? 'online' : 'offline';
+          const players = isOnline && server.players !== null && server.maxPlayers !== null
             ? `${server.players}/${server.maxPlayers} players`
-            : '';
-          const checked = server.lastChecked
+            : '0/0 players';
+          const checked = server.lastChecked && !isStale
             ? `Last checked: ${new Date(server.lastChecked).toLocaleString()}`
-            : '';
+            : 'Offline';
           const displayName = server.serverName || server.name;
+
           return `
             <div class="server-card">
               <div class="server-main">
@@ -357,8 +347,8 @@
                 <span class="server-address">${esc(server.address)}:${esc(server.port)}</span>
               </div>
               <div class="server-meta">
-                ${players ? `<span class="player-count">${esc(players)}</span>` : ''}
-                ${checked ? `<span class="last-checked">${esc(checked)}</span>` : ''}
+                <span class="player-count">${esc(players)}</span>
+                <span class="last-checked">${esc(checked)}</span>
               </div>
             </div>
           `;
@@ -370,7 +360,7 @@
           const data = await fetchStatus();
           render(data);
         } catch {
-          // keep last rendered state on error
+          // Keep offline state on error
         }
       }
 

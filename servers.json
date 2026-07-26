@@ -1,6 +1,14 @@
 {
   "servers": [
     {
+      "name": "Palworld Dedicated",
+      "game": "palworld",
+      "address": "home.saget.org",
+      "port": 8211,
+      "queryPort": 27015,
+      "visible": true
+    },
+    {
       "name": "Satisfactory",
       "game": "satisfactory",
       "address": "home.saget.org",
