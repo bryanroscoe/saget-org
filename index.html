@@ -444,9 +444,9 @@
           const isOpen = openMap[cardId] || (idx === 0 && server.status === 'online');
 
           const lastCheckedTime = server.lastChecked ? new Date(server.lastChecked).getTime() : 0;
-          const isStale = !lastCheckedTime || (Date.now() - lastCheckedTime > 15 * 60 * 1000);
+          const isStale = !lastCheckedTime || (Date.now() - lastCheckedTime > 24 * 60 * 60 * 1000);
           
-          const isOnline = !isStale && server.status === 'online';
+          const isOnline = server.status === 'online';
           const statusClass = isOnline ? 'online' : 'offline';
           
           const playersCount = isOnline && server.players !== null && server.maxPlayers !== null
@@ -457,7 +457,7 @@
             ? server.playerNames.map(name => `<span class="player-tag">${esc(name)}</span>`).join('')
             : '<span style="opacity: 0.5;">None</span>';
 
-          const checked = server.lastChecked && !isStale
+          const checked = server.lastChecked
             ? new Date(server.lastChecked).toLocaleString()
             : 'Offline';
 
